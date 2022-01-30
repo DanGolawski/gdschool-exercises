@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                background-color: #004069;
+                font-family: 'Mochiy Pop P One', sans-serif;
+            }
+            #logo {
+                position: relative;
+                margin-left: 22vw;
+                width: 15vw;
+                height: 15vw;
+            }
+            #main-container {
+                position: absolute;
+                width: 60vw;
+                height: 100vh;
+                left: 20vw;
+            }
+            h1 {
+                text-align: center;
+                margin-bottom: 20px;
+                color: white;
+                letter-spacing: 0.1em;
+                font-size: 5vh;
+            }
+            select, input, button, label {
+                font-family: 'Mochiy Pop P One', sans-serif;
+                display: block;
+                margin: 0 auto;
+                width: 20vw;
+                font-size: 3vh;
+                color: #004069;
+            }
+            label {
+                font-size: 2vh;
+                color: white;
+            }
+            h2 {
+                text-align: center;
+                color: white;
+                font-family: 'Mochiy Pop P One', sans-serif;
+            }
+            @media screen and (orientation:portrait) {
+                #main-container {
+                    width: 100vw;
+                    left: 0;
+                }
+                select, input, button, label {
+                    width: 90vw;
+                    margin-left: 5vw;
+                }
+                #logo {
+                    width: 30vw;
+                    height: 30vw;
+                    margin-left: 35vw;
+                }
+            } 
+            
+        </style>
+    </head>
+    <body>
+        <div id="main-container">
+            {% load static %}
+            <img src="{% static 'dgschoollogo.png' %}" id="logo">
+            <h1>Wybierz zadanie</h1>
+
+            <form action="getexercise">
+                <label for="book">Wybierz książkę :</label><br>
+                <select name="book">
+                    {% for book in books %}
+                    <option value="{{ book.id }}">{{ book.displayedValue }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <label for="chapter">Wpisz rozdział (np. 2) :</label><br>
+                <input name="chapter" type="number" required>
+                <br>
+                <label for="book">Wpisz numer zadania (np. 22) :</label><br>
+                <input name="exercise" type="number" required>
+                <br>
+                <br>
+                <button type="submit">Szukaj</button>
+                <br>
+                <br>
+                <a href="https://www.instagram.com/gdschool_matematyka/"><h2>Odwiedź GDSchool 😀</h2></a>
+            </form>
+        </div>
+    </body>
+</html> 
