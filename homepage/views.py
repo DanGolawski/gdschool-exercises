@@ -22,9 +22,9 @@ book_titles = {
 }
 
 def get_dropdown_values():
-    books = Exercise.objects.raw('SELECT DISTINCT id, book FROM homepage_exercise')
-    books = list(map(lambda b: {'id': b.book, 'displayedValue': book_titles[b.book]}, books))
-    return books
+    books = list(Exercise.objects.values_list('book', flat=True))
+    books = list(set(books))
+    return list(map(lambda b: {'id': b, 'displayedValue': book_titles[b]}, books))
 
 def display(request):
     books = get_dropdown_values()
@@ -38,7 +38,6 @@ def getexercise(request):
     selected_exercises = Exercise.objects.raw(f'SELECT id, image FROM homepage_exercise WHERE book="{book}" AND chapter={chapter} AND exercise={exercise}')
     selected_exercises = [ex for ex in selected_exercises]
     if not len(selected_exercises):
-        messages.info(request, 'Ups... Jeszcze nie mamy tego zadania :(')
         return render(request, 'imageview.html')
     selected_exercise = selected_exercises[0]
     # return render(request, 'imageview.html', {'image': selected_exercise.image})
