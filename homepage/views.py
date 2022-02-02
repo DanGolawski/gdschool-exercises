@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Exercise
+from django.contrib import messages
 
 book_titles = {
     'pazdro_1_1': 'Pazdro 1 p.rozsz.',
@@ -34,6 +35,11 @@ def getexercise(request):
     book = request.GET.get('book')
     chapter = request.GET.get('chapter')
     exercise = request.GET.get('exercise')
-    selected_exercise = Exercise.objects.raw(f'SELECT id, image FROM homepage_exercise WHERE book="{book}" AND chapter={chapter} AND exercise={exercise}')
-    selected_exercise = [ex for ex in selected_exercise][0]
-    return render(request, 'imageview.html', {'image': selected_exercise.image})
+    selected_exercises = Exercise.objects.raw(f'SELECT id, image FROM homepage_exercise WHERE book="{book}" AND chapter={chapter} AND exercise={exercise}')
+    selected_exercises = [ex for ex in selected_exercises]
+    if not len(selected_exercises):
+        messages.info(request, 'Ups... Jeszcze nie mamy tego zadania :(')
+        return render(request, 'imageview.html')
+    selected_exercise = selected_exercises[0]
+    # return render(request, 'imageview.html', {'image': selected_exercise.image})
+    return redirect(selected_exercise.image)
