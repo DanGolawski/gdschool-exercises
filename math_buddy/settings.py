@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g0^r7j=tu4xg9lkhs%h**g7zvqt8ad1ua7x$0h-7=yo=@3+bv@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['gdschool.pythonanywhere.com']
 
 
 # Application definition
@@ -117,7 +117,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
