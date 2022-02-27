@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g0^r7j=tu4xg9lkhs%h**g7zvqt8ad1ua7x$0h-7=yo=@3+bv@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gdschool.pythonanywhere.com']
+# ALLOWED_HOSTS = ['gdschool.pythonanywhere.com']
 
 
 # Application definition

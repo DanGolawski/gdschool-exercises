@@ -22,7 +22,10 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', homepage_views.display, name='display'),
-    path('getexercise', homepage_views.getexercise, name='getexercise')
+    path('get-chapters/<str:book_index>', homepage_views.get_chapters, name='get_chapter'),
+    path('get-topics/<str:book_index>/<int:chapter_nr>', homepage_views.get_topics, name='get_topics'),
+    path('get-exercises/<str:book_index>/<int:chapter_nr>/<int:topic_nr>', homepage_views.get_exercises, name='get_exercises'),
+    path('show-exercise', homepage_views.show_exercise, name='show-exercise'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

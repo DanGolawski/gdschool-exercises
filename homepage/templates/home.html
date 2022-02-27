@@ -4,6 +4,78 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
+        <script>
+            window.onload = () => {
+                const dropdownSelectors = [
+                    {selector: document.querySelector('#book-selector'), endpoint: 'get-chapters', selectedValue: null},
+                    {selector: document.querySelector('#chapter-selector'), endpoint: 'get-topics', selectedValue: null},
+                    {selector: document.querySelector('#topic-selector'), endpoint: 'get-exercises', selectedValue: null},
+                    {selector: document.querySelector('#exercise-selector'), endpoint: '', selectedValue: null}
+                ]
+                setDropdownsVisibility();
+                setButtonVisibility();
+                
+                dropdownSelectors.forEach((selectorData, index) => {
+                    selectorData.selector.addEventListener('change', event => {
+                        console.log(event.target.value)
+                        selectorData.selectedValue = event.target.value;
+                        nextSelector = index + 1 < dropdownSelectors.length ? dropdownSelectors[index + 1].selector : null;
+                        resetDropdownValues(nextSelector);
+                        setDropdownsVisibility();
+                        setButtonVisibility();
+                        console.log(dropdownSelectors)
+                        getDropdownValues(selectorData, nextSelector);
+                    });
+                })
+                function getDropdownValues(selectorData, dropdownToFill) {
+                    if (!nextSelector) return;
+                    parameters = dropdownSelectors.map(selector => selector.selectedValue).filter(value => !!value);
+                    fetch(`/${selectorData.endpoint}/${parameters.join('/')}`, {
+                        headers:{
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(dropdownElems => {
+                        dropdownToFill.innerHTML = `<option value="">-</option>`;
+                        for (let option of dropdownElems) {
+                            dropdownToFill.innerHTML += `<option value="${option.index || option.image}">${option.displayed_value || option.exercise_nr}</option>`
+                        }
+                    })
+                }
+
+                function resetDropdownValues(nextSelector) {
+                    if (!nextSelector) return;
+                    reset = false;
+                    dropdownSelectors.forEach(selectorData => {
+                        if (selectorData.selector === nextSelector) reset = true;
+                        if (reset) {
+                            selectorData.selectedValue = null;
+                            selectorData.selector.innerHTML = '';
+                        }
+                    });
+                }
+
+                function setDropdownsVisibility() {
+                    dropdownSelectors.forEach(selectorData => {
+                        selectorData.selector.disabled = selectorData.selectedValue ? false : true;
+                    })
+                    firstUnselectedSelector = dropdownSelectors.find(selectorData => !selectorData.selectedValue);
+                    if (firstUnselectedSelector) firstUnselectedSelector.selector.disabled = false;
+                }
+
+                function setButtonVisibility() {
+                    anyNullValue = dropdownSelectors.find(selectorData => !selectorData.selectedValue);
+                    document.querySelector('#search-button').disabled = anyNullValue ? true : false;
+                }
+            }
+
+            function showExercise() {
+                const selectTag = document.querySelector('#exercise-selector');
+                window.location.href = selectTag.options[selectTag.selectedIndex].value;
+            }
+        </script> 
         <style>
             * {
                 margin: 0;
@@ -43,6 +115,7 @@
             label {
                 font-size: 2vh;
                 color: white;
+                margin-bottom: 0 !important;
             }
             h2 {
                 text-align: center;
@@ -71,25 +144,27 @@
         <div id="main-container">
             {% load static %}
             <img src="{% static 'dgschoollogo.png' %}" id="logo">
-            <h1>Wybierz zadanie</h1>
+            <h1>Witaj w Math Buddy!</h1>
 
-            <form action="getexercise">
-                <label for="book">Wybierz książkę :</label><br>
-                <select name="book">
+            <form action="show-exercise">
+                <label for="book">Wybierz książkę :</label>
+                <select id="book-selector" name="book">
+                    <option value="">-</option>
                     {% for book in books %}
-                    <option value="{{ book.id }}">{{ book.displayedValue }}</option>
+                    <option value="{{ book.book_id }}">{{ book.displayed_value }}</option>
                     {% endfor %}
                 </select>
                 <br>
-                <label for="chapter">Wpisz rozdział (np. 2) :</label><br>
-                <input name="chapter" type="number" required>
+                <label for="chapter">Wybierz rozdział :</label>
+                <select id="chapter-selector" name="chapter"></select>
                 <br>
-                <label for="book">Wpisz numer zadania (np. 22) :</label><br>
-                <input name="exercise" type="number" required>
+                <label for="book">Wybierz temat :</label>
+                <select id="topic-selector" name="topic"></select>
                 <br>
+                <label for="book">Wybierz zadanie :</label>
+                <select id="exercise-selector" name="exercise"></select>
                 <br>
-                <button type="submit">Szukaj</button>
-                <br>
+                <button id="search-button" type="button" onclick="showExercise()">Szukaj</button>
                 <br>
                 <a href="https://www.instagram.com/gdschool_matematyka/"><h2>Odwiedź GDSchool 😀</h2></a>
             </form>

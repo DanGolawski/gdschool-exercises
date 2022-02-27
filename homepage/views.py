@@ -1,44 +1,27 @@
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
-from .models import Exercise
+from .models import Book, Chapter, Exercise, Topic
 from django.contrib import messages
-
-book_titles = {
-    'pazdro_1_1': 'Pazdro 1 p.rozsz.',
-    'pazdro_2_1': 'Pazdro 2 p.rozsz.',
-    'pazdro_3_1': 'Pazdro 3 p.rozsz.',
-    'pazdro_4_1': 'Pazdro 4 p.rozsz.',
-    'pazdro_1_0': 'Pazdro 1 p.podst.',
-    'pazdro_2_0': 'Pazdro 2 p.podst.',
-    'pazdro_3_0': 'Pazdro 3 p.podst.',
-    'pazdro_4_0': 'Pazdro 4 p.podst.',
-    'nowaera_1_1': 'Nowa Era 1 p.rozsz.',
-    'nowaera_2_1': 'Nowa Era 2 p.rozsz.',
-    'nowaera_3_1': 'Nowa Era 3 p.rozsz.',
-    'nowaera_4_1': 'Nowa Era 4 p.rozsz.',
-    'nowaera_1_0': 'Nowa Era 1 p.podst.',
-    'nowaera_2_0': 'Nowa Era 2 p.podst.',
-    'nowaera_3_0': 'Nowa Era 3 p.podst.',
-    'nowaera_4_0': 'Nowa Era 4 p.podst.',
-}
-
-def get_dropdown_values():
-    books = list(Exercise.objects.values_list('book', flat=True))
-    books = list(set(books))
-    return list(map(lambda b: {'id': b, 'displayedValue': book_titles[b]}, books))
+from django.http import JsonResponse
 
 def display(request):
-    books = get_dropdown_values()
+    books = Book.objects.all()
     return render(request, 'home.html', {'books': books})
 
+def get_chapters(request, book_index):
+    chapters = list(Chapter.objects.raw(f'SELECT * FROM homepage_chapter WHERE book="{book_index}"'))
+    chapters = list(map(lambda chapter: model_to_dict(chapter), chapters))
+    return JsonResponse(chapters, safe=False)
 
-def getexercise(request):
-    book = request.GET.get('book')
-    chapter = request.GET.get('chapter')
-    exercise = request.GET.get('exercise')
-    selected_exercises = Exercise.objects.raw(f'SELECT id, image FROM homepage_exercise WHERE book="{book}" AND chapter={chapter} AND exercise={exercise}')
-    selected_exercises = [ex for ex in selected_exercises]
-    if not len(selected_exercises):
-        return render(request, 'imageview.html')
-    selected_exercise = selected_exercises[0]
-    # return render(request, 'imageview.html', {'image': selected_exercise.image})
-    return redirect(selected_exercise.image)
+def get_topics(request, book_index, chapter_nr):
+    topics = list(Topic.objects.raw(f'SELECT * FROM homepage_topic WHERE book="{book_index}" AND chapter="{chapter_nr}"'))
+    topics = list(map(lambda topic: model_to_dict(topic), topics))
+    return JsonResponse(topics, safe=False)
+
+def get_exercises(request, book_index, chapter_nr, topic_nr):
+    exercises = list(Exercise.objects.raw(f'SELECT * FROM homepage_exercise WHERE book="{book_index}" AND chapter="{chapter_nr}" AND topic="{topic_nr}"'))
+    exercises = list(map(lambda exercise: model_to_dict(exercise), exercises))
+    return JsonResponse(exercises, safe=False)
+
+def show_exercise(request):
+    return redirect(request.GET.get('exercise'))
