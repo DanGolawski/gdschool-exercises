@@ -4,6 +4,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&display=swap" rel="stylesheet">
+        {% load static %}
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
         <script>
             window.onload = () => {
                 const dropdownSelectors = [
@@ -22,7 +24,7 @@
                         resetDropdownValues(nextSelector);
                         setDropdownsVisibility();
                         setButtonVisibility();
-                        getDropdownValues(selectorData, nextSelector);
+                        if (selectorData.selectedValue) getDropdownValues(selectorData, nextSelector);
                     });
                 })
                 function getDropdownValues(selectorData, dropdownToFill) {
@@ -154,13 +156,19 @@
                 </select>
                 <br>
                 <label for="chapter">Wybierz rozdział :</label>
-                <select id="chapter-selector" name="chapter"></select>
+                <select id="chapter-selector" name="chapter">
+                    <option value="">-</option>
+                </select>
                 <br>
                 <label for="book">Wybierz temat :</label>
-                <select id="topic-selector" name="topic"></select>
+                <select id="topic-selector" name="topic">
+                    <option value="">-</option>
+                </select>
                 <br>
                 <label for="book">Wybierz zadanie :</label>
-                <select id="exercise-selector" name="exercise"></select>
+                <select id="exercise-selector" name="exercise">
+                    <option value="">-</option>
+                </select>
                 <br>
                 <button id="search-button" type="button" onclick="showExercise()">Szukaj</button>
                 <br>
