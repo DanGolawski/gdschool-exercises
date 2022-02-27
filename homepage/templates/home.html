@@ -17,13 +17,11 @@
                 
                 dropdownSelectors.forEach((selectorData, index) => {
                     selectorData.selector.addEventListener('change', event => {
-                        console.log(event.target.value)
                         selectorData.selectedValue = event.target.value;
                         nextSelector = index + 1 < dropdownSelectors.length ? dropdownSelectors[index + 1].selector : null;
                         resetDropdownValues(nextSelector);
                         setDropdownsVisibility();
                         setButtonVisibility();
-                        console.log(dropdownSelectors)
                         getDropdownValues(selectorData, nextSelector);
                     });
                 })
