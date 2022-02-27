@@ -50,7 +50,7 @@
                         if (selectorData.selector === nextSelector) reset = true;
                         if (reset) {
                             selectorData.selectedValue = null;
-                            selectorData.selector.innerHTML = '';
+                            selectorData.selector.innerHTML = '<option value="">-</option>';
                         }
                     });
                 }
